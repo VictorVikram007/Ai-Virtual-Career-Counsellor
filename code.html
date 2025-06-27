@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Career Counsellor UI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --secondary: #f43f5e;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --gray: #94a3b8;
+            --gray-light: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8fafc;
+            color: var(--dark);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1.25rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            font-size: 1.75rem;
+            background: rgba(255, 255, 255, 0.15);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        h1 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: -0.025em;
+        }
+        
+        .tagline {
+            margin-top: 0.25rem;
+            opacity: 0.9;
+            font-weight: 400;
+            font-size: 0.875rem;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.875rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--success);
+        }
+        
+        /* Main Panel Layout */
+        .panel-container {
+            display: flex;
+            gap: 0;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            height: calc(100vh - 100px);
+            margin-top: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background-color: white;
+            padding: 1.5rem 0;
+            border-right: 1px solid var(--gray-light);
+            overflow-y: auto;
+        }
+        
+        .sidebar-title {
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--gray);
+            padding: 0 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            padding: 0.75rem 1.5rem;
+            margin-bottom: 0.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+        
+        .sidebar-menu li:hover {
+            background-color: #f8fafc;
+        }
+        
+        .sidebar-menu li.active {
+            background-color: #f1f5ff;
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .sidebar-menu li.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: var(--primary);
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .sidebar-icon {
+            font-size: 1.25rem;
+            width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Content Area Styles */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .content-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .content-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+        
+        .content-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--gray-light);
+        }
+        
+        /* Chat Specific Styles */
+        .chatbot-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .chatbot-name {
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+        
+        .chatbot-status {
+            font-size: 0.8125rem;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .chatbot-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--success);
+        }
+        
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-right: 0.5rem;
+        }
+        
+        /* Custom scrollbar */
+        .messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .messages::-webkit-scrollbar-thumb {
+            background: var(--gray);
+            border-radius: 3px;
+        }
+        
+        .messages::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.5;
+            font-size: 0.9375rem;
+            position: relative;
+        }
+        
+        .bot-message {
+            background-color: #f8fafc;
+            border-bottom-left-radius: 4px;
+            align-self: flex-start;
+            border: 1px solid var(--gray-light);
+        }
+        
+        .user-message {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-bottom-right-radius: 4px;
+            align-self: flex-end;
+            box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
+        }
+        
+        .input-area {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--gray-light);
+            border-radius: 12px;
+            outline: none;
+            transition: all 0.2s;
+            font-family: inherit;
+            font-size: 0.9375rem;
+        }
+        
+        .chat-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .send-button {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        
+        .send-button:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            transform: translateY(-1px);
+        }
+        
+        .send-icon {
+            font-size: 1.25rem;
+        }
+        
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .quick-reply {
+            background-color: #f1f5ff;
+            color: var(--primary);
+            border: none;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 0.8125rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quick-reply:hover {
+            background-color: #e0e7ff;
+        }
+        
+        /* Career Card Styles */
+        .career-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .career-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .career-title {
+            font-weight: 600;
+            font-size: 1.0625rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .career-description {
+            color: var(--gray);
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+        
+        .career-details {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .career-detail {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8125rem;
+            color: var(--dark);
+        }
+        
+        .detail-icon {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+        
+        /* Explore Careers Section */
+        .career-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 2rem;
+        }
+        
+        .career-category {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            border-top: 4px solid var(--primary);
+            text-align: center;
+        }
+        
+        .career-category:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .category-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .category-count {
+            font-size: 0.8125rem;
+            color: var(--gray);
+        }
+        
+        .search-container {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            border: 1px solid var(--gray-light);
+            border-radius: 12px;
+            font-size: 0.9375rem;
+            outline: none;
+            transition: all 0.2s;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 12px center;
+            background-size: 18px;
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        /* Skills Assessment Styles */
+        .assessment-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .skill-item {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--gray-light);
+        }
+        
+        .skill-question {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        
+        .skill-options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .skill-option {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background-color: #f8fafc;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            border: 1px solid var(--gray-light);
+        }
+        
+        .skill-option:hover {
+            background-color: #f1f5f9;
+        }
+        
+        .skill-option.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .assessment-progress {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #f1f5f9;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-size: 0.8125rem;
+            color: var(--gray);
+            text-align: center;
+        }
+        
+        .assessment-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+        
+        .assessment-button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 0.9375rem;
+        }
+        
+        .assessment-button.primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+        }
+        
+        .assessment-button.primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+        }
+        
+        .assessment-button.secondary {
+            background-color: transparent;
+            border: 1px solid var(--gray-light);
+            color: var(--dark);
+        }
+        
+        .assessment-button.secondary:hover {
+            background-color: #f8fafc;
+        }
+        
+        /* Education Paths Styles */
+        .education-levels {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 2rem;
+        }
+        
+        .education-level {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--gray-light);
+        }
+        
+        .edu-level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+        
+        .edu-level-title {
+            font-weight: 600;
+            font-size: 1.0625rem;
+        }
+        
+        .edu-level-icon {
+            font-size: 1.25rem;
+            transition: transform 0.2s;
+            color: var(--gray);
+        }
+        
+        .edu-level-icon.open {
+            transform: rotate(180deg);
+        }
+        
+        .edu-level-content {
+            display: none;
+            margin-top: 1rem;
+        }
+        
+        .edu-level-content.show {
+            display: block;
+        }
+        
+        .education-path {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .education-path:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .path-number {
+            width: 28px;
+            height: 28px;
+            background-color: #f1f5ff;
+            color: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+            font-size: 0.875rem;
+        }
+        
+        .path-content {
+            flex: 1;
+        }
+        
+        .path-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9375rem;
+        }
+        
+        .path-description {
+            color: var(--gray);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        /* Settings Styles */
+        .settings-form {
+            max-width: 600px;
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9375rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            font-size: 0.9375rem;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            outline: none;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            font-size: 0.9375rem;
+            background-color: white;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        
+        .form-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 0.9375rem;
+        }
+        
+        .settings-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 2rem;
+        }
+        
+        .settings-button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 0.9375rem;
+        }
+        
+        .settings-button.primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+        }
+        
+        .settings-button.primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+        }
+        
+        .settings-button.secondary {
+            background-color: transparent;
+            border: 1px solid var(--gray-light);
+            color: var(--dark);
+        }
+        
+        .settings-button.secondary:hover {
+            background-color: #f8fafc;
+        }
+        
+        /* How It Works Styles */
+        .how-it-works {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .step {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .step-number {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            flex: 1;
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--gray-light);
+        }
+        
+        .step-title {
+            font-weight: 600;
+            font-size: 1.0625rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step-description {
+            color: var(--gray);
+            line-height: 1.6;
+            font-size: 0.9375rem;
+        }
+        
+        /* Tutorial Styles */
+        .tutorial-video {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background-color: #f1f5f9;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            border: 1px solid var(--gray-light);
+        }
+        
+        .tutorial-video-placeholder {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray);
+        }
+        
+        .video-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        /* Feedback form styles */
+        .feedback-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .rating-container {
+            margin-bottom: 1.5rem;
+        }
+        
+        .rating-stars {
+            display: flex;
+            gap: 4px;
+            margin-top: 0.5rem;
+        }
+        
+        .rating-star {
+            font-size: 1.5rem;
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .rating-star.active {
+            color: #f59e0b;
+        }
+        
+        .feedback-textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 12px;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            font-family: inherit;
+            resize: vertical;
+            transition: all 0.2s;
+            font-size: 0.9375rem;
+        }
+        
+        .feedback-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            outline: none;
+        }
+        
+        /* General section styles */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            letter-spacing: -0.025em;
+        }
+        
+        .section-description {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            font-size: 0.9375rem;
+        }
+        
+        /* Hide all content sections initially */
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Back button */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--primary);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .panel-container {
+                flex-direction: column;
+                height: auto;
+                margin-top: 1rem;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--gray-light);
+                overflow-y: visible;
+                padding: 1rem 0;
+            }
+            
+            .sidebar-menu {
+                display: flex;
+                overflow-x: auto;
+                padding: 0 1rem;
+                gap: 8px;
+            }
+            
+            .sidebar-menu li {
+                white-space: nowrap;
+                margin-bottom: 0;
+                padding: 8px 12px;
+            }
+            
+            .sidebar-menu li.active::before {
+                display: none;
+            }
+            
+            .sidebar-menu li.active {
+                background-color: var(--primary);
+                color: white;
+            }
+            
+            .career-categories {
+                grid-template-columns: 1fr;
+            }
+            
+            .career-details {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .skill-options {
+                flex-direction: column;
+            }
+            
+            .step {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .content-section.active {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">💼</div>
+                    <div>
+                        <h1>CareerPath AI</h1>
+                        <div class="tagline">Discover your ideal career journey</div>
+                    </div>
+                </div>
+                <div class="status">
+                    <span class="status-dot"></span>
+                    <span>Connected</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="panel-container">
+            <div class="sidebar">
+                <h3 class="sidebar-title">Menu</h3>
+                <ul class="sidebar-menu" id="main-menu">
+                    <li class="active" data-section="chat">
+                        <span class="sidebar-icon">💬</span>
+                        <span>Chat</span>
+                    </li>
+                    <li data-section="explore">
+                        <span class="sidebar-icon">🔍</span>
+                        <span>Explore</span>
+                    </li>
+                    <li data-section="skills">
+                        <span class="sidebar-icon">📊</span>
+                        <span>Assessment</span>
+                    </li>
+                    <li data-section="education">
+                        <span class="sidebar-icon">🎓</span>
+                        <span>Education</span>
+                    </li>
+                    <li data-section="settings">
+                        <span class="sidebar-icon">⚙️</span>
+                        <span>Settings</span>
+                    </li>
+                </ul>
+                
+                <h3 class="sidebar-title">Resources</h3>
+                <ul class="sidebar-menu" id="help-menu">
+                    <li data-section="how-it-works">
+                        <span class="sidebar-icon">❓</span>
+                        <span>How It Works</span>
+                    </li>
+                    <li data-section="tutorial">
+                        <span class="sidebar-icon">📚</span>
+                        <span>Tutorial</span>
+                    </li>
+                    <li data-section="feedback">
+                        <span class="sidebar-icon">📩</span>
+                        <span>Feedback</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Chat Section -->
+            <div class="content-area content-section active" id="chat-section">
+                <div class="content-header">
+                    <div class="chatbot-avatar">AI</div>
+                    <div>
+                        <div class="chatbot-name">CareerGuide AI</div>
+                        <div class="chatbot-status">
+                            <span class="chatbot-status-dot"></span>
+                            <span>Online - Ready to help</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="content-body">
+                    <div class="messages">
+                        <div class="message bot-message">
+                            <p>Hello! 👋 I'm your AI career guide. Let's discover career paths that match your unique skills and interests. What are you passionate about?</p>
+                            <div class="quick-replies">
+                                <button class="quick-reply">Technology</button>
+                                <button class="quick-reply">Healthcare</button>
+                                <button class="quick-reply">Business</button>
+                                <button class="quick-reply">Arts</button>
+                            </div>
+                        </div>
+                        
+                        <div class="message user-message">
+                            I'm interested in technology and creative work.
+                        </div>
+                        
+                        <div class="message bot-message">
+                            <p>Great combination! Here are some careers that blend technology and creativity:</p>
+                            
+                            <div class="career-card">
+                                <div class="career-title">UX/UI Designer</div>
+                                <div class="career-description">
+                                    Create intuitive and beautiful digital experiences by combining design skills with technical understanding.
+                                </div>
+                                <div class="career-details">
+                                    <div class="career-detail">
+                                        <span class="detail-icon">💰</span>
+                                        <span>$96,500/yr (US avg)</span>
+                                    </div>
+                                    <div class="career-detail">
+                                        <span class="detail-icon">📈</span>
+                                        <span>23% growth</span>
+                                    </div>
+                                    <div class="career-detail">
+                                        <span class="detail-icon">🎓</span>
+                                        <span>Bachelor's degree</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="career-card">
+                                <div class="career-title">Frontend Developer</div>
+                                <div class="career-description">
+                                    Implement designs and build interactive web applications using code.
+                                </div>
+                                <div class="career-details">
+                                    <div class="career-detail">
+                                        <span class="detail-icon">💰</span>
+                                        <span>$89,200/yr (US avg)</span>
+                                    </div>
+                                    <div class="career-detail">
+                                        <span class="detail-icon">📈</span>
+                                        <span>19% growth</span>
+                                    </div>
+                                    <div class="career-detail">
+                                        <span class="detail-icon">🎓</span>
+                                        <span>Bachelor's degree</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="quick-replies">
+                                <button class="quick-reply">Tell me more about UX Design</button>
+                                <button class="quick-reply">Skills needed for Frontend</button>
+                                <button class="quick-reply">Other creative tech careers</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="content-footer">
+                    <div class="input-area">
+                        <input type="text" class="chat-input" placeholder="Type your message...">
+                        <button class="send-button">
+                            <span class="send-icon">➤</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Explore Careers Section -->
+            <div class="content-area content-section" id="explore-section">
+                <div class="content-header">
+                    <h2 class="section-title">Explore Careers</h2>
+                </div>
+                
+                <div class="content-body">
+                    <p class="section-description">
+                        Browse career categories to discover paths that match your interests. Click any category to see detailed information.
+                    </p>
+                    
+                    <div class="search-container">
+                        <input type="text" class="search-input" placeholder="Search careers...">
+                    </div>
+                    
+                    <div class="career-categories">
+                        <div class="career-category" data-category="technology">
+                            <div class="category-icon">💻</div>
+                            <h3 class="category-title">Technology</h3>
+                            <div class="category-count">24 careers</div>
+                        </div>
+                        <div class="career-category" data-category="healthcare">
+                            <div class="category-icon">🏥</div>
+                            <h3 class="category-title">Healthcare</h3>
+                            <div class="category-count">18 careers</div>
+                        </div>
+                        <div class="career-category" data-category="business">
+                            <div class="category-icon">💼</div>
+                            <h3 class="category-title">Business</h3>
+                            <div class="category-count">22 careers</div>
+                        </div>
+                        <div class="career-category" data-category="education">
+                            <div class="category-icon">📚</div>
+                            <h3 class="category-title">Education</h3>
+                            <div class="category-count">15 careers</div>
+                        </div>
+                        <div class="career-category" data-category="arts">
+                            <div class="category-icon">🎨</div>
+                            <h3 class="category-title">Arts & Design</h3>
+                            <div class="category-count">12 careers</div>
+                        </div>
+                        <div class="career-category" data-category="engineering">
+                            <div class="category-icon">🔧</div>
+                            <h3 class="category-title">Engineering</h3>
+                            <div class="category-count">19 careers</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Detailed career view (hidden by default) -->
+                    <div id="career-detail-view" style="display: none;">
+                        <button id="back-to-categories" class="back-button">
+                            <span>◄</span> Back to categories
+                        </button>
+                        <h3 id="detail-category-title" class="section-title" style="margin-top: 0;"></h3>
+                        
+                        <div id="careers-in-category"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Skills Assessment Section -->
+            <div class="content-area content-section" id="skills-section">
+                <div class="content-header">
+                    <h2 class="section-title">Skills Assessment</h2>
+                </div>
+                
+                <div class="content-body">
+                    <div class="assessment-container">
+                        <p class="section-description">
+                            Answer these questions to help us understand your strengths and preferences.
+                            We'll use this information to recommend suitable career paths for you.
+                        </p>
+                        
+                        <div class="assessment-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="assessment-progress" style="width: 20%;"></div>
+                            </div>
+                            <div class="progress-text">Question 2 of 10</div>
+                        </div>
+                        
+                        <div class="skill-item">
+                            <h3 class="skill-question">How do you prefer to solve problems?</h3>
+                            <div class="skill-options">
+                                <div class="skill-option">Analyzing data</div>
+                                <div class="skill-option">Creative thinking</div>
+                                <div class="skill-option active">Following procedures</div>
+                                <div class="skill-option">Collaborating</div>
+                            </div>
+                        </div>
+                        
+                        <div class="skill-item">
+                            <h3 class="skill-question">Which activities do you enjoy most?</h3>
+                            <div class="skill-options">
+                                <div class="skill-option active">Working with numbers</div>
+                                <div class="skill-option">Designing visuals</div>
+                                <div class="skill-option">Helping people</div>
+                                <div class="skill-option">Leading discussions</div>
+                            </div>
+                        </div>
+                        
+                        <div class="assessment-buttons">
+                            <button class="assessment-button secondary">Previous</button>
+                            <button class="assessment-button primary">Continue</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Education Paths Section -->
+            <div class="content-area content-section" id="education-section">
+                <div class="content-header">
+                    <h2 class="section-title">Education Paths</h2>
+                </div>
+                
+                <div class="content-body">
+                    <p class="section-description">
+                        Explore educational requirements and recommended paths for different careers.
+                        Click on any level to see detailed progression information.
+                    </p>
+                    
+                    <div class="education-levels">
+                        <div class="education-level">
+                            <div class="edu-level-header">
+                                <h3 class="edu-level-title">High School Preparation</h3>
+                                <span class="edu-level-icon">▼</span>
+                            </div>
+                            <div class="edu-level-content show">
+                                <div class="education-path">
+                                    <div class="path-number">1</div>
+                                    <div class="path-content">
+                                        <h4 class="path-title">Core Subjects Foundation</h4>
+                                        <p class="path-description">
+                                            Focus on mathematics, sciences, language arts, and social studies to build a strong academic foundation.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="education-path">
+                                    <div class="path-number">2</div>
+                                    <div class="path-content">
+                                        <h4 class="path-title">Career Exploration</h4>
+                                        <p class="path-description">
+                                            Take elective courses in different fields like computer science, business, or psychology to explore interests.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="education-level">
+                            <div class="edu-level-header">
+                                <h3 class="edu-level-title">Undergraduate Degrees</h3>
+                                <span class="edu-level-icon">▼</span>
+                            </div>
+                            <div class="edu-level-content show">
+                                <div class="education-path">
+                                    <div class="path-number">1</div>
+                                    <div class="path-content">
+                                        <h4 class="path-title">Bachelor's Degree (4 years)</h4>
+                                        <p class="path-description">
+                                            Most professional careers require a bachelor's degree in a relevant field. Common degrees include Computer Science, Business Administration, Nursing, etc.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="education-path">
+                                    <div class="path-number">2</div>
+                                    <div class="path-content">
+                                        <h4 class="path-title">Associate Degree (2 years)</h4>
+                                        <p class="path-description">
+                                            Technical and vocational careers often accept associates degrees from community colleges or technical institutes.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="education-level">
+                            <div class="edu-level-header">
+                                <h3 class="edu-level-title">Graduate Education</h3>
+                                <span class="edu-level-icon">▼</span>
+                            </div>
+                            <div class="edu-level-content show">
+                                <div class="education-path">
+                                    <div class="path-number">1</div>
+                                    <div class="path-content">
+                                        <h4 class="path-title">Master's Degree (1-3 years)</h4>
+                                        <p class="path-description">
+                                            Required for advanced positions in fields like business (MBA), education, psychology, and data science.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="education-path">
+                                    <div class="path-number">2</div>
+                                    <div class="path-content">
+                                        <h4 class="path-title">Doctoral/Professional Degrees</h4>
+                                        <p class="path-description">
+                                            Necessary for careers like physicians (MD), lawyers (JD), researchers (PhD), and university professors.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Settings Section -->
+            <div class="content-area content-section" id="settings-section">
+                <div class="content-header">
+                    <h2 class="section-title">Settings</h2>
+                </div>
+                
+                <div class="content-body">
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label class="form-label" for="username">Username</label>
+                            <input type="text" id="username" class="form-control" value="career_explorer">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email</label>
+                            <input type="email" id="email" class="form-control" value="user@example.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Preferred Career Fields</label>
+                            <div style="margin-top: 0.5rem;">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" class="form-checkbox" checked>
+                                    Technology
+                                </label>
+                            </div>
+                            <div style="margin-top: 0.5rem;">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" class="form-checkbox">
+                                    Healthcare
+                                </label>
+                            </div>
+                            <div style="margin-top: 0.5rem;">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" class="form-checkbox" checked>
+                                    Business
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="notification-pref">Notifications</label>
+                            <select id="notification-pref" class="form-select">
+                                <option>All notifications</option>
+                                <option selected>Important updates only</option>
+                                <option>No notifications</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="theme-pref">Theme</label>
+                            <select id="theme-pref" class="form-select">
+                                <option>Light</option>
+                                <option selected>System Default</option>
+                                <option>Dark</option>
+                            </select>
+                        </div>
+                        
+                        <div class="settings-buttons">
+                            <button class="settings-button secondary">Reset</button>
+                            <button class="settings-button primary">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- How It Works Section -->
+            <div class="content-area content-section" id="how-it-works-section">
+                <div class="content-header">
+                    <h2 class="section-title">How It Works</h2>
+                </div>
+                
+                <div class="content-body">
+                    <div class="how-it-works">
+                        <p class="section-description">
+                            Our AI career counselor uses advanced natural language processing to understand your interests
+                            and skills, then matches them with suitable career paths from our comprehensive database.
+                        </p>
+                        
+                        <div class="steps">
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h3 class="step-title">Tell Us About Yourself</h3>
+                                    <p class="step-description">
+                                        Start a conversation by sharing your interests, skills, or answering our assessment questions.
+                                        The more we know about you, the better our recommendations will be.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h3 class="step-title">Advanced Analysis</h3>
+                                    <p class="step-description">
+                                        Our system analyzes your responses using NLP, extracting key themes to understand your
+                                        personality traits, strengths, and preferences.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h3 class="step-title">Career Matching</h3>
+                                    <p class="step-description">
+                                        We compare your profile against hundreds of careers, scoring each for compatibility
+                                        based on required skills, personality traits, and work environment preferences.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="step">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h3 class="step-title">Personalized Recommendations</h3>
+                                    <p class="step-description">
+                                        Receive customized career suggestions with detailed information about each path,
+                                        including education requirements, salary ranges, job outlook, and responsibilities.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tutorial Section -->
+            <div class="content-area content-section" id="tutorial-section">
+                <div class="content-header">
+                    <h2 class="section-title">Tutorial</h2>
+                </div>
+                
+                <div class="content-body">
+                    <p class="section-description">
+                        Learn how to get the most out of CareerPath AI with our step-by-step guide.
+                    </p>
+                    
+                    <div class="tutorial-video">
+                        <div class="tutorial-video-placeholder">
+                            <div class="video-icon">▶️</div>
+                            <h3>Getting Started with CareerPath AI</h3>
+                            <p>Video tutorial coming soon</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-replies">
+                        <button class="quick-reply">Getting Started Guide</button>
+                        <button class="quick-reply">Career Exploration Tips</button>
+                        <button class="quick-reply">Understanding Results</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Feedback Section -->
+            <div class="content-area content-section" id="feedback-section">
+                <div class="content-header">
+                    <h2 class="section-title">Feedback</h2>
+                </div>
+                
+                <div class="content-body">
+                    <div class="how-it-works">
+                        <p class="section-description">
+                            We value your feedback to improve CareerPath AI. Please share your thoughts below.
+                        </p>
+                        
+                        <div class="feedback-form">
+                            <div class="form-group">
+                                <label class="form-label" for="feedback-type">Feedback Type</label>
+                                <select id="feedback-type" class="form-select">
+                                    <option>General Feedback</option>
+                                    <option>Bug Report</option>
+                                    <option>Feature Request</option>
+                                </select>
+                            </div>
+                            
+                            <div class="rating-container">
+                                <label class="form-label">Rating</label>
+                                <div class="rating-stars">
+                                    <span class="rating-star" data-rating="1">★</span>
+                                    <span class="rating-star" data-rating="2">★</span>
+                                    <span class="rating-star active" data-rating="3">★</span>
+                                    <span class="rating-star" data-rating="4">★</span>
+                                    <span class="rating-star" data-rating="5">★</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="feedback-subject">Subject</label>
+                                <input type="text" id="feedback-subject" class="form-control" placeholder="Brief summary">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="feedback-message">Your Feedback</label>
+                                <textarea id="feedback-message" class="feedback-textarea" placeholder="Please share your experience..."></textarea>
+                            </div>
+                            
+                            <div class="settings-buttons">
+                                <button class="settings-button secondary">Cancel</button>
+                                <button class="settings-button primary">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation between sections
+            const menuItems = document.querySelectorAll('.sidebar-menu li');
+            const contentSections = document.querySelectorAll('.content-section');
+            
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Remove active class from all menu items and sections
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    contentSections.forEach(section => section.classList.remove('active'));
+                    
+                    // Add active class to clicked menu item
+                    this.classList.add('active');
+                    
+                    // Show corresponding section
+                    const sectionId = this.getAttribute('data-section') + '-section';
+                    document.getElementById(sectionId).classList.add('active');
+                });
+            });
+            
+            // Chat functionality
+            const chatInput = document.querySelector('.chat-input');
+            const sendButton = document.querySelector('.send-button');
+            const messagesContainer = document.querySelector('.messages');
+            const quickReplies = document.querySelectorAll('.quick-reply');
+            
+            function addMessage(text, isUser) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+                messageDiv.textContent = text;
+                messagesContainer.appendChild(messageDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+            
+            sendButton.addEventListener('click', function() {
+                const message = chatInput.value.trim();
+                if (message) {
+                    addMessage(message, true);
+                    chatInput.value = '';
+                    
+                    // Simulate bot response
+                    setTimeout(() => {
+                        addMessage("Interesting! Tell me more about what aspects of technology excite you.", false);
+                    }, 1000);
+                }
+            });
+            
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendButton.click();
+                }
+            });
+            
+            quickReplies.forEach(button => {
+                button.addEventListener('click', function() {
+                    const replyText = this.textContent;
+                    addMessage(replyText, true);
+                    
+                    setTimeout(() => {
+                        if (replyText === "Technology") {
+                            addMessage("Great choice! The tech industry offers many opportunities. Are you more interested in coding, data analysis, cybersecurity, or something else?", false);
+                        }
+                    }, 1000);
+                });
+            });
+            
+            // Explore Careers functionality
+            const careerCategories = document.querySelectorAll('.career-category');
+            const backToCategoriesBtn = document.getElementById('back-to-categories');
+            const careersInCategory = document.getElementById('careers-in-category');
+            const careerDetailView = document.getElementById('career-detail-view');
+            const exploreSection = document.getElementById('explore-section');
+            
+            careerCategories.forEach(category => {
+                category.addEventListener('click', function() {
+                    const categoryName = this.getAttribute('data-category');
+                    
+                    // Hide categories grid
+                    document.querySelector('.career-categories').style.display = 'none';
+                    document.querySelector('.search-container').style.display = 'none';
+                    
+                    // Show detail view
+                    careerDetailView.style.display = 'block';
+                    
+                    // Set category title
+                    document.getElementById('detail-category-title').textContent = `${this.querySelector('.category-title').textContent} Careers`;
+                    
+                    // Generate sample career cards (in a real app, this would come from API)
+                    careersInCategory.innerHTML = '';
+                    
+                    // Add sample careers based on category
+                    if (categoryName === 'technology') {
+                        careersInCategory.innerHTML = `
+                            ${generateCareerCard('Software Developer', 'Develop applications and systems', '$110,140', '22%', 'Bachelor')}
+                            ${generateCareerCard('Data Scientist', 'Analyze complex datasets', '$100,910', '31%', 'Master')}
+                            ${generateCareerCard('Cybersecurity Analyst', 'Protect systems from threats', '$103,590', '33%', 'Bachelor')}
+                        `;
+                    } else if (categoryName === 'healthcare') {
+                        careersInCategory.innerHTML = `
+                            ${generateCareerCard('Registered Nurse', 'Provide patient care', '$77,600', '9%', 'Bachelor')}
+                            ${generateCareerCard('Physical Therapist', 'Help patients recover mobility', '$91,010', '21%', 'Doctorate')}
+                        `;
+                    } else {
+                        // Default generic careers
+                        careersInCategory.innerHTML = `
+                            ${generateCareerCard('Sample Career 1', 'Description of this career path', '$75,000', '15%', 'Bachelor')}
+                            ${generateCareerCard('Sample Career 2', 'Description of this career path', '$85,000', '20%', 'Master')}
+                        `;
+                    }
+                    
+                    // Auto-scroll to top of section
+                    exploreSection.scrollTop = 0;
+                });
+            });
+            
+            function generateCareerCard(title, desc, salary, growth, education) {
+                return `
+                <div class="career-card">
+                    <div class="career-title">${title}</div>
+                    <div class="career-description">${desc}</div>
+                    <div class="career-details">
+                        <div class="career-detail">
+                            <span class="detail-icon">💰</span>
+                            <span>${salary}/yr (US avg)</span>
+                        </div>
+                        <div class="career-detail">
+                            <span class="detail-icon">📈</span>
+                            <span>${growth} growth (2020-30)</span>
+                        </div>
+                        <div class="career-detail">
+                            <span class="detail-icon">🎓</span>
+                            <span>${education}'s degree</span>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }
+            
+            backToCategoriesBtn.addEventListener('click', function() {
+                document.querySelector('.career-categories').style.display = 'grid';
+                document.querySelector('.search-container').style.display = 'block';
+                careerDetailView.style.display = 'none';
+            });
+            
+            // Education paths accordion functionality
+            const eduLevelHeaders = document.querySelectorAll('.edu-level-header');
+            
+            eduLevelHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const content = this.nextElementSibling;
+                    const icon = this.querySelector('.edu-level-icon');
+                    
+                    if (content.style.display === 'block') {
+                        content.style.display = 'none';
+                        icon.classList.remove('open');
+                    } else {
+                        content.style.display = 'block';
+                        icon.classList.add('open');
+                    }
+                });
+            });
+            
+            // Skills assessment option selection
+            const skillOptions = document.querySelectorAll('.skill-option');
+            
+            skillOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove active class from all options in this question
+                    this.parentNode.querySelectorAll('.skill-option').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked option
+                    this.classList.add('active');
+                });
+            });
+            
+            // Star rating functionality
+            const ratingStars = document.querySelectorAll('.rating-star');
+            
+            ratingStars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = this.getAttribute('data-rating');
+                    
+                    // Highlight all stars up to the clicked one
+                    ratingStars.forEach(s => {
+                        if (s.getAttribute('data-rating') <= rating) {
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('active');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+rasa==3.4.7
+tensorflow==2.7.0
+streamlit==1.22.0
+nltk==3.8.1
+pandas==1.5.3
+numpy==1.23.5
+scikit-learn==1.2.2
